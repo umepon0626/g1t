@@ -74,6 +74,7 @@ def read_object(repository: Repository, sha: str) -> G1tObject:
         null_byte = raw.find(b"\x00", space)
         fmt = raw[:space].decode("ascii")
         size = int(raw[space:null_byte].decode("ascii"))
+
         if size != len(raw) - null_byte - 1:
             raise Exception(f"Malformed object {sha}: bad length")
         if fmt == "commit":
@@ -119,13 +120,17 @@ def parse_kvlm(raw, start=0, dct=None):
     if not dct:
         dct = OrderedDict()
     space = raw.find(b" ", start)
+
     new_line = raw.find(b"\n", start)
     if (space < 0) or (new_line < space):
         assert new_line == start
         dct[None] = raw[start + 1 :]
         return dct
 
-    key = raw[start:new_line]
+    key = raw[start:space]
+    import pdb
+
+    pdb.set_trace()
     end = start
     while True:
         end = raw.find(b"\n", end + 1)
