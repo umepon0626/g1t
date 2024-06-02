@@ -128,9 +128,6 @@ def parse_kvlm(raw, start=0, dct=None):
         return dct
 
     key = raw[start:space]
-    import pdb
-
-    pdb.set_trace()
     end = start
     while True:
         end = raw.find(b"\n", end + 1)
