@@ -11,6 +11,12 @@ def main() -> int:
 
 
 @main.command()
+def show_ref() -> int:
+    cmd.show_ref.cmd_show_ref()
+    return 0
+
+
+@main.command()
 @click.argument("commit", type=str)
 @click.argument("path", type=Path)
 def checkout(commit: str, path: Path) -> int:

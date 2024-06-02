@@ -208,3 +208,27 @@ def checkout_tree(repo: Repository, tree: G1tTree, path: Path) -> None:
         else:
             with dst.open("wb") as f:
                 f.write(obj.blobdata)
+
+
+def resolve_ref(repo: Repository, refname: str) -> str:
+    refpath = repo.gitdir / refname
+    if not refpath.exists():
+        return None
+    with refpath.open() as f:
+        refname = f.read()[:-1]
+    if refname.startswith("ref: "):
+        return resolve_ref(repo, refname[5:])
+    return refname
+
+
+def list_ref(repo: Repository, path: Path | None = None):
+    if not path:
+        path = repo.gitdir / "refs"
+    refs = OrderedDict()
+    for ref in path.iterdir():
+        if ref.is_dir():
+            refs[ref.name] = list_ref(repo, ref)
+        else:
+            refs[ref.name] = resolve_ref(repo, str(ref.relative_to(repo.gitdir)))
+
+    return refs
