@@ -77,9 +77,9 @@ def read_object(repository: Repository, sha: str) -> G1tObject:
         if size != len(raw) - null_byte - 1:
             raise Exception(f"Malformed object {sha}: bad length")
         if fmt == "commit":
-            return G1tCommit(raw[space + 1 :])
+            return G1tCommit(raw[null_byte + 1 :])
         elif fmt == "tree":
-            return G1tTree(raw[space + 1 :])
+            return G1tTree(raw[null_byte + 1 :])
         # elif fmt == "tag":
         #     return Tag(raw[space + 1 :])
         if fmt == "blob" or fmt == "tree":

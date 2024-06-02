@@ -12,7 +12,7 @@ def main() -> int:
 
 @main.command()
 @click.argument("commit", type=str)
-@click.argument("path", type=click.Path(exists=True))
+@click.argument("path", type=Path)
 def checkout(commit: str, path: Path) -> int:
     cmd.checkout.cmd_checkout(commit, path)
     return 0
