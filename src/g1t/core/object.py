@@ -136,7 +136,7 @@ def parse_kvlm(raw, start=0, dct=None):
         end = raw.find(b"\n", end + 1)
         if raw[end + 1] != ord(" "):
             break
-    value = raw[new_line + 1 : end].replace(b"\n ", b"\n")
+    value = raw[space + 1 : end].replace(b"\n ", b"\n")
     if key in dct:
         if not isinstance(dct[key], list):
             dct[key] = [dct[key]]
