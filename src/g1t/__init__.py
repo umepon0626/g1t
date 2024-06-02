@@ -1,11 +1,36 @@
 import click
 from g1t.core.repository import Repository
+from g1t import cmd
 from configparser import ConfigParser
 from pathlib import Path
 
 
 @click.group()
 def main() -> int:
+    return 0
+
+
+@main.command()
+@click.argument("commit", type=str)
+@click.argument("path", type=click.Path(exists=True))
+def checkout(commit: str, path: Path) -> int:
+    cmd.checkout.cmd_checkout(commit, path)
+    return 0
+
+
+@main.command()
+@click.argument("tree", type=str)
+@click.option("--recursive", is_flag=True)
+def ls_tree(tree: str, recursive: bool) -> int:
+    cmd.ls_tree.cmd_ls_tree(tree, recursive)
+    return 0
+
+
+@main.command()
+@click.argument("type_name", type=click.Choice(["blob", "commit", "tag", "tree"]))
+@click.argument("sha", type=str)
+def cat_file(type_name: str, sha: str) -> int:
+    cmd.cat_file.cmd_cat_file(type_name, sha)
     return 0
 
 

@@ -5,7 +5,7 @@ from configparser import ConfigParser
 class Repository:
     def __init__(self, path: Path, check_dir_exist: bool = False) -> None:
         self.worktree = path
-        self.gitdir = path / ".g1t"
+        self.gitdir = path / ".git"
 
         if check_dir_exist and not self.gitdir.is_dir():
             raise Exception(f"Not a git repository {path}")
