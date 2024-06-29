@@ -16,11 +16,12 @@ def main() -> int:
     "--annotate",
     is_flag=True,
     help="Annotate the commit with the tagger name and date",
+    default=False,
 )
-@click.argument("name", type=str, default=None)
-@click.argument("object", type=str, default="HEAD")
-def tag() -> int:
-    cmd.tag.cmd_tag()
+@click.option("--name", type=str, default=None)
+@click.option("--object_name", type=str, default="HEAD")
+def tag(annotate: bool, name: str | None, object_name: str) -> int:
+    cmd.tag.cmd_tag(object_name, name, annotate)
     return 0
 
 
