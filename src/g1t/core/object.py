@@ -3,6 +3,7 @@ import zlib
 import hashlib
 from collections import OrderedDict
 from pathlib import Path
+import re
 
 
 class G1tObject(object):
@@ -125,8 +126,63 @@ def hash_object(file_data, fmt: str, repo=None):
     return write_object(obj, repo)
 
 
-def find_object(repo: Repository, name: str) -> str:
-    return name
+def find_object(
+    repo: Repository,
+    name: str,
+    fmt=None,
+    follow=None,
+) -> str | None:
+    sha_list = resolve_object(repo, name)
+
+    if len(sha_list) == 0:
+        raise Exception(f"No such reference {name}")
+
+    if len(sha_list) > 1:
+        raise Exception(f"Ambiguous reference {name}: {sha_list}")
+
+    sha = sha_list[0]
+
+    while True:
+        obj = read_object(repo, sha)
+
+        if obj.fmt == fmt:
+            return sha
+
+        if not follow:
+            return None
+
+        if obj.fmt == b"tag":
+            sha = obj.kvlm[b"object"].decode("ascii")
+        elif obj.fmt == b"commit" and follow:
+            sha = obj.kvlm[b"tree"].decode("ascii")
+        else:
+            return None
+
+
+def resolve_object(repo: Repository, name: str) -> list[str]:
+    candidates: list[str] = []
+    hash_re = re.compile(r"^[0-9A-Fa-f]{4,40}$")
+    if len(name.strip()) <= 0 and len(name.strip()) > 40:
+        return None
+    if name == "HEAD":
+        return [resolve_ref(repo, "HEAD")]
+    if hash_re.match(name):
+        name = name.lower()
+        prefix = name[:2]
+        rem = name[2:]
+        dir = repo.gitdir / "objects" / prefix
+        for d in dir.iterdir():
+            if d.name.startswith(rem):
+                # user doesn't care about the full hash.
+                # so we need to check with `startswith`
+                candidates.append(prefix + d.name)
+    tag = resolve_ref(repo, "refs/tags/" + name)
+    if tag:
+        candidates.append(tag)
+    branch = resolve_ref(repo, "refs/heads/" + name)
+    if branch:
+        candidates.append(branch)
+    return candidates
 
 
 def parse_kvlm(raw, start=0, dct=None):
