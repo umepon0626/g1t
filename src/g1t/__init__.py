@@ -48,6 +48,13 @@ def ls_tree(tree: str, recursive: bool) -> int:
 
 
 @main.command()
+@click.option("--verbose", is_flag=True, default=False)
+def ls_files(verbose: bool) -> int:
+    cmd.ls_files.cmd_ls_files(verbose)
+    return 0
+
+
+@main.command()
 @click.argument("type_name", type=click.Choice(["blob", "commit", "tag", "tree"]))
 @click.argument("sha", type=str)
 def cat_file(type_name: str, sha: str) -> int:
