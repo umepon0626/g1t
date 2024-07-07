@@ -4,6 +4,7 @@ from .ls_files import cmd_ls_files
 from .checkout import cmd_checkout
 from .show_ref import cmd_show_ref
 from .tag import cmd_tag
+from .check_ignore import cmd_check_ignore
 
 __all__ = [
     "cmd_cat_file",
@@ -12,4 +13,5 @@ __all__ = [
     "cmd_checkout",
     "cmd_show_ref",
     "cmd_tag",
+    "cmd_check_ignore",
 ]

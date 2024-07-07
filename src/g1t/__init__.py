@@ -92,3 +92,9 @@ def repo_default_config():
     ret.set("core", "bare", "false")
 
     return ret
+
+
+@main.command()
+@click.argument("path", nargs=-1)
+def check_ignore(path):
+    cmd.check_ignore.cmd_check_ignore([Path(p) for p in path])
