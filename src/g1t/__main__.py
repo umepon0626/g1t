@@ -1,4 +1,4 @@
 import g1t
 import sys
 
-sys.exit(g1t.main())
+sys.exit(g1t.__init__())
