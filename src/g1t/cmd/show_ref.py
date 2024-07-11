@@ -11,7 +11,7 @@ def cmd_show_ref():
 
 def show_ref(refs, with_hash=True, prefix: str = ""):
     for k, v in refs.items():
-        if type(v) is str:
+        if isinstance(v, str):
             echo(f"{v + ' ' if with_hash else ''} {prefix+'/'if prefix else ''} {k}")
         else:
             show_ref(v, with_hash, f"{prefix}{'/' if prefix else ''}{k}")

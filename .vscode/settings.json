@@ -5,4 +5,5 @@
        "editor.formatOnSave": true
    },
   "ruff.path": ["${workspaceFolder}/.venv/bin/ruff"],
+  "ruff.nativeServer": true
 }
