@@ -32,6 +32,12 @@ def show_ref() -> int:
 
 
 @main.command()
+def status() -> int:
+    cmd.status.cmd_status()
+    return 0
+
+
+@main.command()
 @click.argument("commit", type=str)
 @click.argument("path", type=Path)
 def checkout(commit: str, path: Path) -> int:

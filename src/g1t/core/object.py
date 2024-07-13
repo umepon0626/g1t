@@ -4,6 +4,7 @@ import hashlib
 from collections import OrderedDict
 from pathlib import Path
 import re
+from dataclasses import dataclass
 
 
 class G1tObject(object):
@@ -23,18 +24,18 @@ class G1tObject(object):
         pass
 
 
+@dataclass
 class G1tTreeLeaf(object):
-    def __init__(self, mode, path: str, sha) -> None:
-        self.mode = mode
-        self.path = path
-        self.sha = sha
+    mode: bytes
+    path: str
+    sha: str
 
 
 class G1tTree(G1tObject):
     fmt = b"tree"
 
     def serialize(self) -> bytes:
-        return super().serialize()
+        return serialize_tree(self)
 
     def deserialize(self, data: bytes) -> bytes:
         self.items = parse_tree(data)
@@ -74,10 +75,9 @@ def read_object(repository: Repository, sha: str) -> G1tObject:
     path = repository.gitdir / "objects" / sha[:2] / sha[2:]
     with path.open("rb") as f:
         raw = zlib.decompress(f.read())
-
         space = raw.find(b" ")
-        null_byte = raw.find(b"\x00", space)
         fmt = raw[:space].decode("ascii")
+        null_byte = raw.find(b"\x00", space)
         size = int(raw[space:null_byte].decode("ascii"))
 
         if size != len(raw) - null_byte - 1:
@@ -86,9 +86,9 @@ def read_object(repository: Repository, sha: str) -> G1tObject:
             return G1tCommit(raw[null_byte + 1 :])
         elif fmt == "tree":
             return G1tTree(raw[null_byte + 1 :])
-        # elif fmt == "tag":
-        #     return Tag(raw[space + 1 :])
-        if fmt == "blob" or fmt == "tree":
+        elif fmt == "tag":
+            return G1tTag(raw[null_byte + 1 :])
+        elif fmt == "blob":
             return G1tBlob(raw[null_byte + 1 :])
         else:
             raise Exception(f"Unknown type {fmt}")
@@ -121,7 +121,7 @@ def find_object(
     repo: Repository,
     name: str,
     fmt: bytes | None = None,
-    follow=None,
+    follow: bool = True,
 ) -> str | None:
     sha_list = resolve_object(repo, name)
 
@@ -136,6 +136,7 @@ def find_object(
     while True:
         obj = read_object(repo, sha)
 
+        # TODO: refactor this fmt conditions
         if obj.fmt == fmt:
             return sha
 
@@ -143,9 +144,9 @@ def find_object(
             return None
 
         if obj.fmt == b"tag":
-            sha = obj.kvlm[b"object"].decode("ascii")
+            return obj.kvlm[b"object"].decode("ascii")
         elif obj.fmt == b"commit" and follow:
-            sha = obj.kvlm[b"tree"].decode("ascii")
+            return obj.kvlm[b"tree"].decode("ascii")
         else:
             return None
 
@@ -223,7 +224,7 @@ def parse_one_tree(raw: bytes, start=0) -> tuple[G1tTreeLeaf, int]:
 
     mode = raw[start:x]
     if len(mode) == 5:
-        mode = b" " + mode
+        mode = b"0" + mode
     y = raw.find(b"\x00", x)
     path = raw[x + 1 : y]
     sha = format(int.from_bytes(raw[y + 1 : y + 21], "big"), "040x")

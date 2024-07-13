@@ -17,7 +17,7 @@ class G1tIndexEntry(object):
         sha=None,
         flag_assume_valid=None,
         flag_stage=None,
-        name=None,
+        name: str | None = None,
     ) -> None:
         self.ctime = ctime  # The last time a file's metadata changed.
         self.mtime = mtime  # The last time a file's data changed.

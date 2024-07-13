@@ -5,6 +5,7 @@ from .checkout import cmd_checkout
 from .show_ref import cmd_show_ref
 from .tag import cmd_tag
 from .check_ignore import cmd_check_ignore
+from .status import cmd_status
 
 __all__ = [
     "cmd_cat_file",
@@ -14,4 +15,5 @@ __all__ = [
     "cmd_show_ref",
     "cmd_tag",
     "cmd_check_ignore",
+    "cmd_status",
 ]
