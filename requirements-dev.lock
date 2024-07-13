@@ -11,4 +11,5 @@
 -e file:.
 click==8.1.7
     # via g1t
+gin==0.1.6
 ruff==0.4.5
