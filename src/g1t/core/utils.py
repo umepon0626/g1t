@@ -1,6 +1,8 @@
 from g1t.core.repository import Repository
 from g1t.core.object import find_object, read_object
 from pathlib import Path
+import os
+import configparser
 
 
 def find_repository(path: Path = Path(".")) -> Repository:
@@ -28,3 +30,26 @@ def tree_to_dict(repo: Repository, tree_ref: str, prefix: Path) -> dict[str, str
         else:
             dst[str(path.relative_to(repo.worktree))] = item.sha
     return dst
+
+
+def read_gitconfig() -> configparser.ConfigParser:
+    xdg_config_home = (
+        os.environ["XDG_CONFIG_HOME"]
+        if "XDG_CONFIG_HOME" in os.environ
+        else "~/.config"
+    )
+    configfiles = [
+        os.path.expanduser(os.path.join(xdg_config_home, "git/config")),
+        os.path.expanduser("~/.gitconfig"),
+    ]
+
+    config = configparser.ConfigParser()
+    config.read(configfiles)
+    return config
+
+
+def get_user_from_gitconfig(config: configparser.ConfigParser) -> str | None:
+    if "user" in config:
+        if "name" in config["user"] and "email" in config["user"]:
+            return "{} <{}>".format(config["user"]["name"], config["user"]["email"])
+    return None

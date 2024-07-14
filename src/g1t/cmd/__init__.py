@@ -8,8 +8,11 @@ from .check_ignore import cmd_check_ignore
 from .status import cmd_status
 from .rm import cmd_rm
 from .add import cmd_add
+from .commit import cmd_commit
+
 
 __all__ = [
+    "cmd_commit",
     "cmd_add",
     "cmd_rm",
     "cmd_cat_file",

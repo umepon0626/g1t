@@ -116,3 +116,8 @@ def rm(path):
 @click.argument("path", nargs=-1)
 def add(path):
     cmd.cmd_add([Path(p) for p in path])
+
+
+@main.command()
+def commit(path):
+    cmd.cmd_add([Path(p) for p in path])
