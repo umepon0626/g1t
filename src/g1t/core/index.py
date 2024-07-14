@@ -1,4 +1,4 @@
-from g1t.core.object import Repository
+from g1t.core.object import Repository, hash_object
 import math
 from dataclasses import dataclass
 from pathlib import Path
@@ -224,3 +224,56 @@ def rm(
 
     index.entries = kept_entries
     write_index(repo, index)
+
+
+def add(repo: Repository, paths: list[Path]):
+    rm(repo, paths, delete=False, skip_missing=True)
+
+    # Convert the paths to pairs: (absolute, relative_to_worktree).
+    # Also delete them from the index if they're present.
+    clean_paths = list()
+    for path in paths:
+        abspath = path.absolute()
+        if not (abspath.startswith(str(repo.worktree)) and abspath.is_file()):
+            raise Exception("Not a file, or outside the worktree: {}".format(paths))
+        relpath = abspath.relative_to(repo.worktree)
+        clean_paths.append((abspath, relpath))
+
+        # Find and read the index.  It was modified by rm.  (This isn't
+        # optimal, good enough for wyag!)
+        #
+        # @FIXME, though: we could just
+        # move the index through commands instead of reading and writing
+        # it over again.
+        index = read_index(repo)
+
+        for abspath, relpath in clean_paths:
+            with open(abspath, "rb") as fd:
+                sha = hash_object(fd, b"blob", repo)
+
+            stat = abspath.stat()
+
+            ctime_s = int(stat.st_ctime)
+            ctime_ns = stat.st_ctime_ns % 10**9
+            mtime_s = int(stat.st_mtime)
+            mtime_ns = stat.st_mtime_ns % 10**9
+
+            entry = G1tIndexEntry(
+                ctime=(ctime_s, ctime_ns),
+                mtime=(mtime_s, mtime_ns),
+                dev=stat.st_dev,
+                ino=stat.st_ino,
+                mode_type=0b1000,
+                mode_perms=0o644,
+                uid=stat.st_uid,
+                gid=stat.st_gid,
+                fsize=stat.st_size,
+                sha=sha,
+                flag_assume_valid=False,
+                flag_stage=False,
+                name=relpath,
+            )
+            index.entries.append(entry)
+
+        # Write the index back
+        write_index(repo, index)

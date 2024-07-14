@@ -7,8 +7,10 @@ from .tag import cmd_tag
 from .check_ignore import cmd_check_ignore
 from .status import cmd_status
 from .rm import cmd_rm
+from .add import cmd_add
 
 __all__ = [
+    "cmd_add",
     "cmd_rm",
     "cmd_cat_file",
     "cmd_ls_tree",

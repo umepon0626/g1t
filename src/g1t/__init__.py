@@ -110,3 +110,9 @@ def check_ignore(path):
 @click.argument("path", nargs=-1)
 def rm(path):
     cmd.cmd_rm([Path(p) for p in path])
+
+
+@main.command()
+@click.argument("path", nargs=-1)
+def add(path):
+    cmd.cmd_add([Path(p) for p in path])
