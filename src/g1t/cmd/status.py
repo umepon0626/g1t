@@ -4,6 +4,7 @@ from g1t.core.ignore import read_all_gitignore_config, check_ignore
 from g1t.core.utils import tree_to_dict, find_repository
 from g1t.core.index import G1tIndex, read_index
 from g1t.core.object import hash_object
+from pathlib import Path
 
 
 def cmd_status() -> None:
@@ -67,8 +68,8 @@ def cmd_status_index_worktree(repo: Repository, index: G1tIndex) -> None:
                     if entry.sha != new_sha:
                         print(f"  (modified content) {entry.name}")
 
-        if entry.name in all_files:
-            all_files.remove(entry.name)
+        if Path(entry.name) in all_files:
+            all_files.remove(Path(entry.name))
 
     print("Untracked files:")
     for f in all_files:
