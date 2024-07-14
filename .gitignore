@@ -2,9 +2,12 @@
 __pycache__/
 *.py[oc]
 build/
-dist/
+dist/**
 wheels/
 *.egg-info
 
 # venv
 .venv
+
+# ruff cache
+.ruff_cache/** 
