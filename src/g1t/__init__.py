@@ -103,4 +103,10 @@ def repo_default_config():
 @main.command()
 @click.argument("path", nargs=-1)
 def check_ignore(path):
-    cmd.check_ignore.cmd_check_ignore([Path(p) for p in path])
+    cmd.cmd_check_ignore([Path(p) for p in path])
+
+
+@main.command()
+@click.argument("path", nargs=-1)
+def rm(path):
+    cmd.cmd_rm([Path(p) for p in path])
