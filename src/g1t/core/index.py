@@ -1,39 +1,23 @@
 from g1t.core.object import Repository
 import math
+from dataclasses import dataclass
 
 
+@dataclass
 class G1tIndexEntry(object):
-    def __init__(
-        self,
-        ctime: tuple[int, int] | None = None,
-        mtime: tuple[int, int] | None = None,
-        dev=None,
-        ino=None,
-        mode_type=None,
-        mode_perms=None,
-        uid=None,
-        gid=None,
-        fsize=None,
-        sha=None,
-        flag_assume_valid=None,
-        flag_stage=None,
-        name: str | None = None,
-    ) -> None:
-        self.ctime = ctime  # The last time a file's metadata changed.
-        self.mtime = mtime  # The last time a file's data changed.
-        self.dev = dev  # The device ID.
-        self.ino = ino  # The file's inode number.
-        self.mode_type = (
-            mode_type  # The object type. b1000 (regular) or b1010(symlink).
-        )
-        self.mode_perms = mode_perms  # The object permissions.
-        self.uid = uid
-        self.gid = gid
-        self.fsize = fsize
-        self.sha = sha
-        self.flag_assume_valid = flag_assume_valid
-        self.flag_stage = flag_stage
-        self.name = name
+    ctime: tuple[int, int] | None
+    mtime: tuple[int, int] | None
+    dev: int
+    ino: int
+    mode_type: int
+    mode_perms: int
+    uid: int
+    gid: int
+    fsize: int
+    sha: str
+    flag_assume_valid: bool
+    flag_stage: bool
+    name: str | None
 
 
 class G1tIndex(object):

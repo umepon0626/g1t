@@ -25,7 +25,7 @@ def cmd_status_branch(repo: Repository) -> None:
 
 def cmd_status_head_index(repo: Repository, index: G1tIndex) -> None:
     print("Changes to be committed:")
-    head = tree_to_dict(repo, "HEAD", repo.gitdir)
+    head = tree_to_dict(repo, "HEAD", repo.worktree)
     for entry in index.entries:
         if entry.name in head:
             if head[entry.name] != entry.sha:
@@ -40,9 +40,6 @@ def cmd_status_head_index(repo: Repository, index: G1tIndex) -> None:
 
 def cmd_status_index_worktree(repo: Repository, index: G1tIndex) -> None:
     print("Changes not staged for commit:")
-    import pdb
-
-    pdb.set_trace()
     ignore = read_all_gitignore_config(repo)
     all_files = list()
     for root, _, files in repo.worktree.walk():
@@ -59,8 +56,8 @@ def cmd_status_index_worktree(repo: Repository, index: G1tIndex) -> None:
             print(f"  (deleted) {entry.name}")
         else:
             stat = full_path.stat()
-            ctime_ns = entry.ctime[0] * 1e9 + entry.ctime[1]
-            mtime_ns = entry.mtime[0] * 1e9 + entry.mtime[1]
+            ctime_ns: int = entry.ctime[0] * 10**9 + entry.ctime[1]
+            mtime_ns: int = entry.mtime[0] * 10**9 + entry.mtime[1]
             if ctime_ns != stat.st_ctime_ns or mtime_ns != stat.st_mtime_ns:
                 print(f"  (modified) {entry.name}")
                 with open(full_path, "rb") as f:

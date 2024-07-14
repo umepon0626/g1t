@@ -26,5 +26,5 @@ def tree_to_dict(repo: Repository, tree_ref: str, prefix: Path) -> dict[str, str
         if is_subtree:
             dst.update(tree_to_dict(repo, item.sha, path))
         else:
-            dst[str(path)] = item.sha
+            dst[str(path.relative_to(repo.worktree))] = item.sha
     return dst
