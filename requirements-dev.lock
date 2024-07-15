@@ -12,6 +12,9 @@
 click==8.1.7
     # via g1t
 gin==0.1.6
+gitdb==4.0.11
+    # via gitpython
+gitpython==3.1.43
 iniconfig==2.0.0
     # via pytest
 packaging==24.1
@@ -20,3 +23,5 @@ pluggy==1.5.0
     # via pytest
 pytest==8.2.2
 ruff==0.4.5
+smmap==5.0.1
+    # via gitdb
