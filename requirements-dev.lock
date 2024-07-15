@@ -12,4 +12,11 @@
 click==8.1.7
     # via g1t
 gin==0.1.6
+iniconfig==2.0.0
+    # via pytest
+packaging==24.1
+    # via pytest
+pluggy==1.5.0
+    # via pytest
+pytest==8.2.2
 ruff==0.4.5
