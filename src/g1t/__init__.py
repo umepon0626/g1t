@@ -1,8 +1,11 @@
 import click
 from g1t.core.repository import Repository
+from g1t.core.object import G1tCommit
 from g1t import cmd
 from configparser import ConfigParser
 from pathlib import Path
+from g1t.presentation.converter.commit import commit_converter
+from g1t.presentation.echo.commit import echo_commit
 
 
 @click.group()
@@ -61,10 +64,14 @@ def ls_files(verbose: bool) -> int:
 
 
 @main.command()
-@click.argument("type_name", type=click.Choice(["blob", "commit", "tag", "tree"]))
 @click.argument("sha", type=str)
-def cat_file(type_name: str, sha: str) -> int:
-    cmd.cat_file.cmd_cat_file(type_name, sha)
+def cat_file(sha: str) -> int:
+    obj = cmd.cat_file.cmd_cat_file(sha)
+    if isinstance(obj, G1tCommit):
+        dto = commit_converter(obj)
+        echo_commit(dto)
+    else:
+        print(obj.serialize())
     return 0
 
 

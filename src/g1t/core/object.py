@@ -15,6 +15,7 @@ class G1tObject(object):
             self.init()
 
     def serialize(self) -> bytes:
+        # TODO: delete me. It should be implemented in presentation layer
         raise NotImplementedError("Subclass must implement serialize method")
 
     def deserialize(self, data: bytes) -> None:
