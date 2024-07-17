@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  test_env: 
+    build:
+      context: . 
+    command: "rye run pytest"

@@ -10,23 +10,12 @@ RUN \
   --mount=type=cache,target=/var/lib/apt/lists \
   --mount=type=cache,target=/var/cache/apt/archives \
   apt-get update \
-  && apt-get install -y --no-install-recommends build-essential curl
+  && apt-get install -y --no-install-recommends build-essential curl git
 
 ARG UID=10001
-ARG USERNAME=appuser
-RUN adduser \
-    --disabled-password \
-    --gecos "" \
-    --home "/nonexistent" \
-    --shell "/sbin/nologin" \
-    --no-create-home \
-    --uid "${UID}" \
-    "${USERNAME}"
-    
-
-WORKDIR /home/${USERNAME}
-ENV PYTHONPATH="/home/${USERNAME}:$PYTHONPATH"
-ENV RYE_HOME="/home/${USERNAME}/.rye"
+WORKDIR /workspace
+ENV PYTHONPATH="/workspace:$PYTHONPATH"
+ENV RYE_HOME="/workspace/.rye"
 ENV PATH="${RYE_HOME}/shims:${PATH}"
 
 # RYE_INSTALL_OPTIONはビルドに必要です。
@@ -40,12 +29,15 @@ RUN --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     --mount=type=bind,source=requirements-dev.lock,target=requirements-dev.lock \
     --mount=type=bind,source=.python-version,target=.python-version \
     --mount=type=bind,source=README.md,target=README.md \
-    rye sync --no-dev --no-lock
+    rye sync --no-lock
 
 RUN . .venv/bin/activate
 
 FROM rye AS test
 
-USER appuser
+ENV IS_TESTING_ENVIRONMENT=1
 
 COPY . .
+
+RUN rye sync --no-lock 
+# 自作のモジュールをインストールする。
