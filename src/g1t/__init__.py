@@ -1,11 +1,13 @@
 import click
 from g1t.core.repository import Repository
-from g1t.core.object import G1tCommit
+from g1t.core.object import G1tCommit, G1tTree
 from g1t import cmd
 from configparser import ConfigParser
 from pathlib import Path
 from g1t.presentation.converter.commit import commit_converter
+from g1t.presentation.converter.tree import convert_tree
 from g1t.presentation.echo.commit import echo_commit
+from g1t.presentation.echo.tree import echo_tree
 
 
 @click.group()
@@ -70,8 +72,9 @@ def cat_file(sha: str) -> int:
     if isinstance(obj, G1tCommit):
         dto = commit_converter(obj)
         echo_commit(dto)
-    else:
-        print(obj.serialize())
+    elif isinstance(obj, G1tTree):
+        dto = convert_tree(obj)
+        echo_tree(dto)
     return 0
 
 
