@@ -5,10 +5,11 @@ from collections import OrderedDict
 from pathlib import Path
 import re
 from dataclasses import dataclass
+from typing import Type
 
 
 class G1tObject(object):
-    def __init__(self, data=None) -> None:
+    def __init__(self, data: any = None) -> None:
         if data is not None:
             self.deserialize(data)
         else:
@@ -38,7 +39,7 @@ class G1tTree(G1tObject):
     def serialize(self) -> bytes:
         return serialize_tree(self)
 
-    def deserialize(self, data: bytes) -> bytes:
+    def deserialize(self, data: bytes) -> None:
         self.items = parse_tree(data)
 
     def init(self) -> None:
@@ -72,7 +73,9 @@ class G1tBlob(G1tObject):
         self.blobdata = data
 
 
-def read_object(repository: Repository, sha: str) -> G1tObject:
+def read_object(
+    repository: Repository, sha: str
+) -> G1tTree | G1tTag | G1tBlob | G1tCommit:
     path = repository.gitdir / "objects" / sha[:2] / sha[2:]
     with path.open("rb") as f:
         raw = zlib.decompress(f.read())
@@ -121,7 +124,11 @@ def hash_object(file_data, fmt: str, repo=None):
 def find_object(
     repo: Repository,
     name: str,
-    fmt: bytes | None = None,
+    obj_type: Type[G1tTree]
+    | Type[G1tBlob]
+    | Type[G1tCommit]
+    | Type[G1tTag]
+    | None = None,
     follow: bool = True,
 ) -> str | None:
     sha_list = resolve_object(repo, name)
@@ -138,15 +145,15 @@ def find_object(
         obj = read_object(repo, sha)
 
         # TODO: refactor this fmt conditions
-        if obj.fmt == fmt:
+        if isinstance(obj, obj_type):
             return sha
 
         if not follow:
             return None
 
-        if obj.fmt == b"tag":
+        if isinstance(obj, G1tTag):
             return obj.kvlm[b"object"].decode("ascii")
-        elif obj.fmt == b"commit" and follow:
+        elif isinstance(obj, G1tCommit) and follow:
             return obj.kvlm[b"tree"].decode("ascii")
         else:
             return None
@@ -265,7 +272,7 @@ def checkout_tree(repo: Repository, tree: G1tTree, path: Path) -> None:
     for item in tree.items:
         obj = read_object(repo, item.sha)
         dst = path / item.path
-        if obj.fmt == b"tree":
+        if isinstance(obj, G1tTree):
             dst.mkdir(exist_ok=True)
             checkout_tree(repo, obj, dst)
         else:
@@ -303,7 +310,7 @@ def create_ref(repo: Repository, ref_name: str, sha):
 
 
 def create_tag(repo: Repository, tag_name: str, ref, create_tag_object=False):
-    sha = find_object(repo, ref, fmt=b"commit")
+    sha = find_object(repo, ref, obj_type=G1tCommit)
     if not create_tag_object:
         create_ref(repo, "tags/" + tag_name, sha)
 

@@ -75,6 +75,8 @@ def cat_file(sha: str) -> int:
     elif isinstance(obj, G1tTree):
         dto = convert_tree(obj)
         echo_tree(dto)
+    else:
+        print(obj.serialize())
     return 0
 
 

@@ -9,7 +9,7 @@ def cmd_ls_tree(tree: str, recursive: bool) -> None:
 
 
 def ls_tree(repo: Repository, tree: str, recursive: bool, path: Path) -> None:
-    sha = find_object(repo, tree, fmt=b"tree")
+    sha = find_object(repo, tree, G1tTree)
 
     obj: G1tTree = read_object(repo, sha)
     for leaf in obj.items:
