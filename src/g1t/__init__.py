@@ -70,11 +70,9 @@ def ls_files(verbose: bool) -> int:
 def cat_file(sha: str) -> int:
     obj = cmd.cat_file.cmd_cat_file(sha)
     if isinstance(obj, G1tCommit):
-        dto = commit_converter(obj)
-        echo_commit(dto)
+        echo_commit(commit_converter(obj))
     elif isinstance(obj, G1tTree):
-        dto = convert_tree(obj)
-        echo_tree(dto)
+        echo_tree(convert_tree(obj))
     else:
         print(obj.serialize())
     return 0
@@ -82,7 +80,7 @@ def cat_file(sha: str) -> int:
 
 @main.command()
 @click.argument("path", default=".")
-def cmd_init(path) -> int:
+def cmd_init(path: str) -> Repository:
     repo = Repository(
         Path(path).absolute(),
     )
@@ -102,7 +100,7 @@ def cmd_init(path) -> int:
     return repo
 
 
-def repo_default_config():
+def repo_default_config() -> ConfigParser:
     ret = ConfigParser()
     ret.add_section("core")
     ret.set("core", "repositoryformatversion", "0")
@@ -114,22 +112,23 @@ def repo_default_config():
 
 @main.command()
 @click.argument("path", nargs=-1)
-def check_ignore(path):
+def check_ignore(path: list[str]) -> None:
     cmd.cmd_check_ignore([Path(p) for p in path])
 
 
 @main.command()
 @click.argument("path", nargs=-1)
-def rm(path):
+def rm(path: list[str]) -> None:
     cmd.cmd_rm([Path(p) for p in path])
 
 
 @main.command()
 @click.argument("path", nargs=-1)
-def add(path):
+def add(path: list[str]) -> None:
     cmd.cmd_add([Path(p) for p in path])
 
 
 @main.command()
-def commit(path):
+@click.argument("path", nargs=-1)
+def commit(path: list[str]) -> None:
     cmd.cmd_add([Path(p) for p in path])
