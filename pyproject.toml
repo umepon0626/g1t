@@ -25,7 +25,14 @@ dev-dependencies = [
     "gin>=0.1.6",
     "pytest>=8.2.2",
     "gitpython>=3.1.43",
+    "mypy>=1.10.1",
 ]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+disallow_untyped_decorators = false
+disallow_untyped_calls = false
 
 [tool.hatch.metadata]
 allow-direct-references = true

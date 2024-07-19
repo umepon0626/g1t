@@ -17,6 +17,9 @@ gitdb==4.0.11
 gitpython==3.1.43
 iniconfig==2.0.0
     # via pytest
+mypy==1.10.1
+mypy-extensions==1.0.0
+    # via mypy
 packaging==24.1
     # via pytest
 pluggy==1.5.0
@@ -25,3 +28,5 @@ pytest==8.2.2
 ruff==0.4.5
 smmap==5.0.1
     # via gitdb
+typing-extensions==4.12.2
+    # via mypy
