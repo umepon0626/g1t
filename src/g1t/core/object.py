@@ -8,24 +8,6 @@ from dataclasses import dataclass
 from typing import Type
 
 
-class G1tObject(object):
-    def __init__(self, data: any = None) -> None:
-        if data is not None:
-            self.deserialize(data)
-        else:
-            self.init()
-
-    def serialize(self) -> bytes:
-        # TODO: delete me. It should be implemented in presentation layer
-        raise NotImplementedError("Subclass must implement serialize method")
-
-    def deserialize(self, data: bytes) -> None:
-        raise NotImplementedError("Subclass must implement deserialize method")
-
-    def init(self) -> None:
-        pass
-
-
 @dataclass
 class G1tTreeLeaf(object):
     mode: bytes
@@ -33,8 +15,14 @@ class G1tTreeLeaf(object):
     sha: str
 
 
-class G1tTree(G1tObject):
+class G1tTree(object):
     fmt = b"tree"
+
+    def __init__(self, data) -> None:
+        if data is not None:
+            self.deserialize(data)
+        else:
+            self.init()
 
     def serialize(self) -> bytes:
         return serialize_tree(self)
@@ -46,8 +34,14 @@ class G1tTree(G1tObject):
         self.items = []
 
 
-class G1tCommit(G1tObject):
+class G1tCommit(object):
     fmt = b"commit"
+
+    def __init__(self, data: any = None) -> None:
+        if data is not None:
+            self.deserialize(data)
+        else:
+            self.init()
 
     def serialize(self) -> bytes:
         return serialize_kvlm(self.kvlm)
@@ -59,12 +53,15 @@ class G1tCommit(G1tObject):
         self.kvlm = parse_kvlm(data)
 
 
-class G1tTag(G1tCommit):
+class G1tTag(object):
     fmt = b"tag"
 
 
-class G1tBlob(G1tObject):
+class G1tBlob(object):
     fmt = b"blob"
+
+    def __init__(self, data: any) -> None:
+        self.deserialize(data)
 
     def serialize(self) -> bytes:
         return self.blobdata
@@ -98,7 +95,9 @@ def read_object(
             raise Exception(f"Unknown type {fmt}")
 
 
-def write_object(obj: G1tObject, repository: Repository | None = None):
+def write_object(
+    obj: G1tTree | G1tCommit | G1tBlob, repository: Repository | None = None
+):
     data = obj.serialize()
     raw = obj.fmt + b" " + str(len(data)).encode() + b"\x00" + data
     sha = hashlib.sha1(raw).hexdigest()

@@ -69,9 +69,7 @@ def read_all_gitignore_config(repo: Repository):
         if entry.name == ".gitignore" or entry.name.endswith("/.gitignore"):
             obj: G1tBlob = read_object(repo, entry.sha)
             lines = obj.blobdata.decode("utf8").splitlines()
-            ignore.scoped[os.path.dirname(entry.name)] = parse_git_ignore(
-                lines
-            )  # TODO: remove inheritance (G1tObject -> G1tBlob)
+            ignore.scoped[os.path.dirname(entry.name)] = parse_git_ignore(lines)
 
     return ignore
 
