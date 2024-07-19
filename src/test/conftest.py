@@ -1,5 +1,6 @@
 import pytest
 import shutil
+from typing import Generator
 
 
 def clean_up_after_each_tests() -> None:
@@ -23,14 +24,14 @@ def setup_before_each_tests() -> None:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def secure_original_git_folder() -> None:
+def secure_original_git_folder() -> Generator[None, None, None]:
     setup_before_all_tests()
     yield
     clean_up_after_all_tests()
 
 
 @pytest.fixture(scope="function", autouse=True)
-def reset_git_folder() -> None:
+def reset_git_folder() -> Generator[None, None, None]:
     setup_before_each_tests()
     yield
     clean_up_after_each_tests()
