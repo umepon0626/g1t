@@ -6,7 +6,7 @@ from g1t.core.branch import get_active_branch
 from datetime import datetime
 
 
-def cmd_commit() -> None:
+def cmd_commit(message: str) -> None:
     repo = find_repository()
     index = read_index(repo)
     # Create trees, grab back SHA for the root tree.
@@ -19,7 +19,7 @@ def cmd_commit() -> None:
         find_object(repo, "HEAD"),
         get_user_from_gitconfig(gitconfig_read()),
         datetime.now(),
-        args.message,
+        message,
     )
 
     # Update HEAD so our commit is now the tip of the active branch.

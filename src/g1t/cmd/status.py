@@ -41,7 +41,7 @@ def cmd_status_head_index(repo: Repository, index: G1tIndex) -> None:
 def cmd_status_index_worktree(repo: Repository, index: G1tIndex) -> None:
     print("Changes not staged for commit:")
     ignore = read_all_gitignore_config(repo)
-    all_files = list()
+    all_files: list[Path] = list()
     for root, _, files in repo.worktree.walk():
         if root == repo.gitdir:
             continue
@@ -71,4 +71,4 @@ def cmd_status_index_worktree(repo: Repository, index: G1tIndex) -> None:
     print("Untracked files:")
     for f in all_files:
         if not check_ignore(ignore, f):
-            print(f"  {f}")
+            print(f"  {f.name}")
