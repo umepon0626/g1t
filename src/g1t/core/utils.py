@@ -1,5 +1,5 @@
 from g1t.core.repository import Repository
-from g1t.core.object import find_object, read_object
+from g1t.core.object import find_object, read_object, G1tTree
 from pathlib import Path
 import os
 import configparser
@@ -17,7 +17,7 @@ def find_repository(path: Path = Path(".")) -> Repository:
 
 def tree_to_dict(repo: Repository, tree_ref: str, prefix: Path) -> dict[str, str]:
     dst = {}
-    sha = find_object(repo, tree_ref, fmt=b"tree")
+    sha = find_object(repo, tree_ref, obj_type=G1tTree)
     if sha is None:
         raise Exception(f"Not a tree object {tree_ref}")
     tree = read_object(repo, sha)
