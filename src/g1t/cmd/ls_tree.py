@@ -11,6 +11,9 @@ def cmd_ls_tree(tree: str, recursive: bool) -> None:
 def ls_tree(repo: Repository, tree: str, recursive: bool, path: Path) -> None:
     sha = find_object(repo, tree, G1tTree)
 
+    if sha is None:
+        raise Exception(f"fatal: not a tree object {tree}")
+
     obj: G1tTree = read_object(repo, sha)
     for leaf in obj.items:
         if len(leaf.mode) == 5:
@@ -29,7 +32,7 @@ def ls_tree(repo: Repository, tree: str, recursive: bool, path: Path) -> None:
             case b"16":
                 obj_type = "commit"  # submodule
             case _:
-                raise Exception(f"Unknown object type {obj_type_b}")
+                raise Exception(f"Unknown object type {obj_type_b!r}")
 
         if recursive or obj_type == "tree":
             ls_tree(repo, leaf.sha, recursive, path / leaf.path)
