@@ -146,7 +146,8 @@ def write_index(repo: Repository, index: G1tIndex):
         # ENTRIES
 
         idx = 0
-        for e in index.entries:
+        sorted_entries = sorted(index.entries, key=lambda e: e.name)
+        for e in sorted_entries:
             f.write(e.ctime[0].to_bytes(4, "big"))
             f.write(e.ctime[1].to_bytes(4, "big"))
             f.write(e.mtime[0].to_bytes(4, "big"))
