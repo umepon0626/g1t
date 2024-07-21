@@ -1,5 +1,6 @@
 from g1t.core.utils import find_repository
-from g1t.core.object import find_object, read_object, G1tTree, Repository
+from g1t.core.object import find_object, read_object, G1tTree
+from g1t.core.repository import Repository
 from pathlib import Path
 
 
@@ -14,7 +15,9 @@ def ls_tree(repo: Repository, tree: str, recursive: bool, path: Path) -> None:
     if sha is None:
         raise Exception(f"fatal: not a tree object {tree}")
 
-    obj: G1tTree = read_object(repo, sha)
+    obj = read_object(repo, sha)
+    if not isinstance(obj, G1tTree):
+        raise Exception(f"fatal: object {tree} is not a tree")
     for leaf in obj.items:
         if len(leaf.mode) == 5:
             obj_type_b = leaf.mode[0:1]

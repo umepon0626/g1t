@@ -20,7 +20,7 @@ def cmd_status_branch(repo: Repository) -> None:
     if branch:
         print(f"On branch {branch}")
     else:
-        print(f"HEAD detached at {repo.head}")
+        print("HEAD detached")
 
 
 def cmd_status_head_index(repo: Repository, index: G1tIndex) -> None:
@@ -41,12 +41,13 @@ def cmd_status_head_index(repo: Repository, index: G1tIndex) -> None:
 def cmd_status_index_worktree(repo: Repository, index: G1tIndex) -> None:
     print("Changes not staged for commit:")
     ignore = read_all_gitignore_config(repo)
+    # TODO: refactor relpath and abs path
     all_files: list[Path] = list()
     for root, _, files in repo.worktree.walk():
         if root == repo.gitdir:
             continue
-        for f in files:
-            full_path = root / f
+        for relative_path in files:
+            full_path = root / relative_path
             rel_path = full_path.relative_to(repo.worktree)
             all_files.append(rel_path)
 
@@ -69,6 +70,6 @@ def cmd_status_index_worktree(repo: Repository, index: G1tIndex) -> None:
             all_files.remove(Path(entry.name))
 
     print("Untracked files:")
-    for f in all_files:
-        if not check_ignore(ignore, f):
-            print(f"  {f.name}")
+    for path in all_files:
+        if not check_ignore(ignore, path):
+            print(f"  {path.name}")

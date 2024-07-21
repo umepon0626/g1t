@@ -4,7 +4,7 @@ from g1t.core.index import read_index
 MODETYPE = {0b1000: "regular file", 0b1010: "symlink", 0b1110: "git link"}
 
 
-def cmd_ls_files(verbose: bool):
+def cmd_ls_files(verbose: bool) -> None:
     repo = find_repository()
     index = read_index(repo)
     if verbose:

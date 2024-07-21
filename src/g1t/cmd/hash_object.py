@@ -9,6 +9,6 @@ def cmd_hash_object(path: Path, write: bool = False) -> None:
     else:
         repository = None
     with open(path, "rb") as f:
-        obj = hash_object(repository, f, write)
+        obj = hash_object(f, "commit", repository)
     print(obj)
     return obj

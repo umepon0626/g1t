@@ -1,6 +1,7 @@
 from g1t.core.utils import find_repository
 from g1t.core.object import list_ref
 from click import echo
+from collections import OrderedDict
 
 
 def cmd_show_ref() -> None:
@@ -10,8 +11,8 @@ def cmd_show_ref() -> None:
 
 
 def show_ref(
-    refs,  # type: ignore
-    with_hash=True,
+    refs: OrderedDict,
+    with_hash: bool = True,
     prefix: str = "",
 ) -> None:
     for k, v in refs.items():
