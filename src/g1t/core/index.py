@@ -234,7 +234,7 @@ def add(repo: Repository, paths: list[Path]):
     clean_paths = list()
     for path in paths:
         abspath = path.absolute()
-        if not (abspath.startswith(str(repo.worktree)) and abspath.is_file()):
+        if not (str(abspath).startswith(str(repo.worktree)) and abspath.is_file()):
             raise Exception("Not a file, or outside the worktree: {}".format(paths))
         relpath = abspath.relative_to(repo.worktree)
         clean_paths.append((abspath, relpath))
@@ -247,7 +247,7 @@ def add(repo: Repository, paths: list[Path]):
 
         for abspath, relpath in clean_paths:
             with open(abspath, "rb") as fd:
-                sha = hash_object(fd, b"blob", repo)
+                sha = hash_object(fd, "blob", repo)
 
             stat = abspath.stat()
 
@@ -269,7 +269,7 @@ def add(repo: Repository, paths: list[Path]):
                 sha=sha,
                 flag_assume_valid=False,
                 flag_stage=False,
-                name=relpath,
+                name=relpath.name,
             )
             index.entries.append(entry)
 
