@@ -3,6 +3,7 @@ from g1t.core.index import read_index
 from g1t.core.commit import tree_from_index, commit_create
 from g1t.core.object import find_object
 from g1t.core.branch import get_active_branch
+from g1t.core.config import gitconfig_read
 from datetime import datetime
 
 

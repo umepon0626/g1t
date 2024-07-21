@@ -13,7 +13,7 @@ def tree_from_index(repo: Repository, index: G1tIndex):
     for entry in index.entries:
         dirname = os.path.dirname(entry.name)
 
-        # We create all dictonary entries up to root ("").  We need
+        # We create all dictionary entries up to root ("").  We need
         # them *all*, because even if a directory holds no files it
         # will contain at least a tree.
         key = dirname
