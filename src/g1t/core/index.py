@@ -2,6 +2,7 @@ from g1t.core.object import Repository, hash_object
 import math
 from dataclasses import dataclass
 from pathlib import Path
+import hashlib
 
 
 @dataclass
@@ -133,7 +134,8 @@ def read_index(repo: Repository) -> G1tIndex:
 
 
 def write_index(repo: Repository, index: G1tIndex):
-    with open(repo.gitdir / "index", "wb") as f:
+    index_path = repo.gitdir / "index"
+    with open(index_path, "wb") as f:
         # Write the magic bytes.
         f.write(b"DIRC")
         # Write version number.
@@ -187,6 +189,14 @@ def write_index(repo: Repository, index: G1tIndex):
                 pad = 8 - (idx % 8)
                 f.write((0).to_bytes(pad, "big"))
                 idx += pad
+    # Calculate SHA-1 hash of the entire file content
+    with open(index_path, "rb") as f:
+        file_content = f.read()
+    sha1_hash = hashlib.sha1(file_content).digest()
+
+    # Write the SHA-1 hash at the end of the file
+    with open(index_path, "ab") as f:
+        f.write(sha1_hash)
 
 
 def rm(
@@ -269,7 +279,7 @@ def add(repo: Repository, paths: list[Path]):
                 sha=sha,
                 flag_assume_valid=False,
                 flag_stage=False,
-                name=relpath.name,
+                name=str(relpath),
             )
             index.entries.append(entry)
 
