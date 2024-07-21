@@ -239,9 +239,7 @@ def add(repo: Repository, paths: list[Path]):
         relpath = abspath.relative_to(repo.worktree)
         clean_paths.append((abspath, relpath))
 
-        # Find and read the index.  It was modified by rm.  (This isn't
-        # optimal, good enough for wyag!)
-        #
+        # Find and read the index.  It was modified by rm.          #
         # @FIXME, though: we could just
         # move the index through commands instead of reading and writing
         # it over again.

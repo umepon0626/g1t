@@ -8,6 +8,7 @@ def cmd_hash_object(path: Path, write: bool = False) -> None:
         repository = find_repository()
     else:
         repository = None
-    obj = hash_object(repository, path, write)
+    with open(path, "rb") as f:
+        obj = hash_object(repository, f, write)
     print(obj)
     return obj
