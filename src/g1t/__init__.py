@@ -132,3 +132,9 @@ def add(path: list[str]) -> None:
 @click.option("-m", "--message", type=str, required=True)
 def commit(message: str) -> None:
     cmd.cmd_commit(message)
+
+
+@main.command()
+@click.option("-c", "--create", type=str, required=True)  # TODO: delete required
+def switch(create: str) -> None:
+    cmd.cmd_create_branch(create)

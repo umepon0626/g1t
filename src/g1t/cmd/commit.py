@@ -28,6 +28,6 @@ def cmd_commit(message: str) -> None:
     if active_branch:  # If we're on a branch, we update refs/heads/BRANCH
         with open(repo.gitdir / "refs/heads" / active_branch, "w") as fd:
             fd.write(commit + "\n")
-    else:  # Otherwise, we update HEAD itself.
+    else:  # Otherwise, we update HEAD itself. i.e. Detached HEAD
         with open(repo.gitdir / "HEAD", "w") as fd:
-            fd.write("\n")
+            fd.write(commit + "\n")
