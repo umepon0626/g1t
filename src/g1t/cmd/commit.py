@@ -1,7 +1,7 @@
 from g1t.core.utils import find_repository, get_user_from_gitconfig
 from g1t.core.index import read_index
 from g1t.core.commit import tree_from_index, commit_create
-from g1t.core.object import find_object
+from g1t.core.object import find_object, G1tCommit
 from g1t.core.branch import get_active_branch
 from g1t.core.config import gitconfig_read
 from datetime import datetime
@@ -17,8 +17,8 @@ def cmd_commit(message: str) -> None:
     commit = commit_create(
         repo,
         tree,
-        find_object(repo, "HEAD"),
-        get_user_from_gitconfig(gitconfig_read()),
+        find_object(repo, "HEAD", G1tCommit),
+        get_user_from_gitconfig(gitconfig_read(repo)),
         datetime.now(),
         message,
     )

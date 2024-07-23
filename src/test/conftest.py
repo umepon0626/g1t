@@ -1,6 +1,19 @@
 import pytest
 import shutil
 from typing import Generator
+from pathlib import Path
+from git import Repo
+
+
+def pytest_configure() -> None:
+    pytest.PROJECT_ROOT = Path(__file__).parent.parent.parent
+    pytest.GIT_USER_NAME = "test user"
+    pytest.GIT_USER_EMAIL = "test@gmail.com"
+
+    repo = Repo(pytest.PROJECT_ROOT)
+    with repo.config_writer() as cw:
+        cw.set_value("user", "name", pytest.GIT_USER_NAME)
+        cw.set_value("user", "email", pytest.GIT_USER_EMAIL)
 
 
 def clean_up_after_each_tests() -> None:
@@ -14,6 +27,8 @@ def clean_up_after_all_tests() -> None:
 
 
 def setup_before_all_tests() -> None:
+    # config設定
+
     # .gitファイルを別の場所にコピー
     shutil.copytree(".git", "test/.git", dirs_exist_ok=True)
 

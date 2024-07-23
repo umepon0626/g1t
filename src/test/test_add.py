@@ -1,10 +1,9 @@
 from g1t.cmd.add import cmd_add
-from pathlib import Path
 from git import Repo, IndexEntry
+import pytest
 
 
-PROJECT_ROOT = Path(__file__).parent.parent.parent
-SAMPLE_FILE_PATH = PROJECT_ROOT / "sample.txt"
+SAMPLE_FILE_PATH = pytest.PROJECT_ROOT / "sample.txt"
 
 
 def add_test_sample_file() -> None:
@@ -13,7 +12,7 @@ def add_test_sample_file() -> None:
 
 
 def delete_added_file() -> None:
-    repo = Repo(PROJECT_ROOT)
+    repo = Repo(pytest.PROJECT_ROOT)
     try:
         repo.index.remove([SAMPLE_FILE_PATH])
     except:
@@ -32,7 +31,7 @@ def compare_two_indexed_files(
 
 def test_add() -> None:
     add_test_sample_file()
-    repo = Repo(PROJECT_ROOT)
+    repo = Repo(pytest.PROJECT_ROOT)
     repo.index.add([SAMPLE_FILE_PATH])
     original_git_indexed_files = [b[1] for b in repo.index.entries.items()]
 

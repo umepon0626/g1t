@@ -143,7 +143,6 @@ def find_object(
     while True:
         obj = read_object(repo, sha)
 
-        # TODO: refactor this fmt conditions
         if isinstance(obj, obj_type):
             return sha
 
@@ -222,6 +221,7 @@ def serialize_kvlm(kvlm: OrderedDict):
                 ret += k + b" " + value.replace(b"\n", b"\n ") + b"\n"
         else:
             ret += k + b" " + v.replace(b"\n", b"\n ") + b"\n"
+    ret += b"\n" + kvlm[None]
     return ret
 
 

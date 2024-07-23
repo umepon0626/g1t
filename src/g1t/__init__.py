@@ -129,6 +129,6 @@ def add(path: list[str]) -> None:
 
 
 @main.command()
-@click.argument("path", nargs=-1)
-def commit(path: list[str]) -> None:
-    cmd.cmd_add([Path(p) for p in path])
+@click.option("-m", "--message", type=str, required=True)
+def commit(message: str) -> None:
+    cmd.cmd_commit(message)

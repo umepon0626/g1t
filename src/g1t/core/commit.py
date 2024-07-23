@@ -39,7 +39,7 @@ def tree_from_index(repo: Repository, index: G1tIndex):
     # We ge through the sorted list of paths (dict keys)
     for path in sorted_paths:
         # Prepare a new, empty tree object
-        tree = G1tTree()
+        tree = G1tTree(None)
 
         # Add each entry to our new tree, in turn
         for entry in contents[path]:
