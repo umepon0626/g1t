@@ -11,3 +11,6 @@ wheels/
 
 # ruff cache
 .ruff_cache/** 
+
+# mypy cache
+.mypy_cache/**

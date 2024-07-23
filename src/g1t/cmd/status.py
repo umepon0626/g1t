@@ -72,4 +72,4 @@ def cmd_status_index_worktree(repo: Repository, index: G1tIndex) -> None:
     print("Untracked files:")
     for path in all_files:
         if not check_ignore(ignore, path):
-            print(f"  {path.name}")
+            print(f"  {path}")

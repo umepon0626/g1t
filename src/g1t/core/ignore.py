@@ -64,6 +64,7 @@ def read_all_gitignore_config(repo: Repository):
 
     ignore.global_ignore.append([(".git/**", True)])
 
+    # TODO: why does we read .gitignore from index file?
     index = read_index(repo)
     for entry in index.entries:
         if entry.name == ".gitignore" or entry.name.endswith("/.gitignore"):
