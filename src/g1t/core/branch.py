@@ -1,5 +1,6 @@
 from g1t.core.repository import Repository
 from g1t.core.object import G1tCommit, find_object, G1tBlob
+from g1t.core.index import rm, add
 from g1t.core.utils import tree_to_dict
 from pathlib import Path
 
@@ -74,3 +75,13 @@ def create_new_file(repo: Repository, path: str, sha: str) -> None:
 
 def delete_file(repo: Repository, path: str) -> None:
     (repo.worktree / path).unlink()
+
+
+def update_index(repo: Repository, change: TreeDiff) -> None:
+    for path, (a_sha, b_sha) in change.items():
+        if a_sha is None:
+            add(repo, [Path(path)])
+        elif b_sha is None:
+            rm(repo, [Path(path)])
+        else:
+            add(repo, [Path(path)])
