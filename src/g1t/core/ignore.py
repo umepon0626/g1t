@@ -10,8 +10,8 @@ ContentsAndIgnoreFlag = tuple[str, bool]
 
 
 class G1tIgnore(object):
-    scoped: dict[str, list[ContentsAndIgnoreFlag]] | None = None
-    global_ignore: dict[str, list[ContentsAndIgnoreFlag]] | None = None
+    scoped: dict[str, list[ContentsAndIgnoreFlag]] = {}
+    global_ignore: list[list[ContentsAndIgnoreFlag]] = []
 
     def __init__(
         self,
@@ -47,7 +47,7 @@ def parse_git_ignore(lines: list[str]) -> list[ContentsAndIgnoreFlag]:
     return ret
 
 
-def read_all_gitignore_config(repo: Repository):
+def read_all_gitignore_config(repo: Repository) -> G1tIgnore:
     ignore = G1tIgnore(scoped=dict(), global_ignore=[])
     local_config = repo.gitdir / "info/exclude"
     if local_config.exists():
@@ -68,7 +68,9 @@ def read_all_gitignore_config(repo: Repository):
     index = read_index(repo)
     for entry in index.entries:
         if entry.name == ".gitignore" or entry.name.endswith("/.gitignore"):
-            obj: G1tBlob = read_object(repo, entry.sha)
+            obj = read_object(repo, entry.sha)
+            if not isinstance(obj, G1tBlob):
+                raise Exception(f"Expected blob, got {obj.__class__.__name__}")
             lines = obj.blobdata.decode("utf8").splitlines()
             ignore.scoped[os.path.dirname(entry.name)] = parse_git_ignore(lines)
 
@@ -91,8 +93,8 @@ def is_target_ignored(
 
 
 def check_ignore_scoped(
-    rules_for_ignoring: list[ContentsAndIgnoreFlag], target_path: Path
-):
+    rules_for_ignoring: dict[str, list[ContentsAndIgnoreFlag]], target_path: Path
+) -> bool | None:
     parent = target_path.parent
 
     while True:
@@ -107,7 +109,9 @@ def check_ignore_scoped(
     return None
 
 
-def check_ignore_not_scoped(rules_for_ignoring: list[str], target_path: Path) -> bool:
+def check_ignore_not_scoped(
+    rules_for_ignoring: list[list[ContentsAndIgnoreFlag]], target_path: Path
+) -> bool:
     parent = target_path.parent
     for rule in rules_for_ignoring:
         result = is_target_ignored(rule, parent)

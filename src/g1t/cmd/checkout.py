@@ -5,7 +5,10 @@ from pathlib import Path
 
 def cmd_checkout(commit: str, path: Path) -> None:
     repo = find_repository()
-    obj = read_object(repo, find_object(repo, commit))
+    obj_sha = find_object(repo, commit)
+    if obj_sha is None:
+        raise Exception(f"Commit {commit} not found")
+    obj = read_object(repo, obj_sha)
     if isinstance(obj, G1tCommit):
         obj = read_object(repo, obj.kvlm[b"tree"].decode("ascii"))
     if not isinstance(obj, G1tTree):

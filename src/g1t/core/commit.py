@@ -73,7 +73,9 @@ def tree_from_index(repo: Repository, index: G1tIndex):
     return sha
 
 
-def commit_create(repo: Repository, tree: G1tTree, parent, author, timestamp, message):
+def commit_create(
+    repo: Repository, tree: G1tTree, parent, author, timestamp, message
+) -> str:
     commit = G1tCommit()  # Create the new commit object.
     commit.kvlm[b"tree"] = tree.encode("ascii")
     if parent:

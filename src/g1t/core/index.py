@@ -23,7 +23,7 @@ class G1tIndexEntry(object):
 
 
 class G1tIndex(object):
-    version = None
+    version = 2
     entries = []
 
     def __init__(self, version=2, entries: list[G1tIndexEntry] = None) -> None:
@@ -125,15 +125,15 @@ def read_index(repo: Repository) -> G1tIndex:
                 gid=gid,
                 fsize=fsize,
                 sha=sha,
-                flag_assume_valid=flag_assume_valid,
-                flag_stage=flag_stage,
+                flag_assume_valid=bool(flag_assume_valid),
+                flag_stage=bool(flag_stage),
                 name=name,
             )
         )
     return G1tIndex(version=version, entries=entries)
 
 
-def write_index(repo: Repository, index: G1tIndex):
+def write_index(repo: Repository, index: G1tIndex) -> None:
     index_path = repo.gitdir / "index"
     with open(index_path, "wb") as f:
         # Write the magic bytes.
@@ -163,7 +163,7 @@ def write_index(repo: Repository, index: G1tIndex):
             f.write(e.gid.to_bytes(4, "big"))
 
             f.write(e.fsize.to_bytes(4, "big"))
-            # @FIXME Convert back to int.
+            # @umepon0626 Convert back to int.
             f.write(int(e.sha, 16).to_bytes(20, "big"))
 
             flag_assume_valid = 0x1 << 15 if e.flag_assume_valid else 0
@@ -202,7 +202,7 @@ def write_index(repo: Repository, index: G1tIndex):
 
 def rm(
     repo: Repository, paths: list[Path], delete: bool = True, skip_missing: bool = False
-):
+) -> None:
     index = read_index(repo)
 
     # Make paths absolute
@@ -237,7 +237,7 @@ def rm(
     write_index(repo, index)
 
 
-def add(repo: Repository, paths: list[Path]):
+def add(repo: Repository, paths: list[Path]) -> None:
     rm(repo, paths, delete=False, skip_missing=True)
 
     # Convert the paths to pairs: (absolute, relative_to_worktree).

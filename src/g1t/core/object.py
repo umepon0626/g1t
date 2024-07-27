@@ -7,6 +7,8 @@ import re
 from dataclasses import dataclass
 from typing import Type
 
+Refs = OrderedDict[str, "Refs"]
+
 
 @dataclass
 class G1tTreeLeaf(object):
@@ -18,7 +20,7 @@ class G1tTreeLeaf(object):
 class G1tTree(object):
     fmt = b"tree"
 
-    def __init__(self, data) -> None:
+    def __init__(self, data: bytes | None) -> None:
         if data is not None:
             self.deserialize(data)
         else:
@@ -37,7 +39,7 @@ class G1tTree(object):
 class G1tCommit(object):
     fmt = b"commit"
 
-    def __init__(self, data: any = None) -> None:
+    def __init__(self, data: bytes | None = None) -> None:
         if data is not None:
             self.deserialize(data)
         else:
@@ -183,7 +185,7 @@ def resolve_object(repo: Repository, name: str) -> list[str]:
     return candidates
 
 
-def parse_kvlm(raw, start=0, dct=None):
+def parse_kvlm(raw: bytes, start=0, dct=None):
     if not dct:
         dct = OrderedDict()
 
@@ -290,7 +292,7 @@ def resolve_ref(repo: Repository, refname: str) -> str:
     return refname
 
 
-def list_ref(repo: Repository, path: Path | None = None):
+def list_ref(repo: Repository, path: Path | None = None) -> Refs:
     if not path:
         path = repo.gitdir / "refs"
     refs = OrderedDict()
@@ -303,12 +305,14 @@ def list_ref(repo: Repository, path: Path | None = None):
     return refs
 
 
-def create_ref(repo: Repository, ref_name: str, sha):
+def create_ref(repo: Repository, ref_name: str, sha) -> None:
     with open(repo.gitdir / "refs" / ref_name, "w") as fp:
         fp.write(sha + "\n")
 
 
-def create_tag(repo: Repository, tag_name: str, ref, create_tag_object=False):
+def create_tag(
+    repo: Repository, tag_name: str, ref: str, create_tag_object: bool = False
+) -> None:
     sha = find_object(repo, ref, obj_type=G1tCommit)
     if not create_tag_object:
         create_ref(repo, "tags/" + tag_name, sha)
