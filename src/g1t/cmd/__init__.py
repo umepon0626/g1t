@@ -9,7 +9,7 @@ from .status import cmd_status
 from .rm import cmd_rm
 from .add import cmd_add
 from .commit import cmd_commit
-from .switch import cmd_create_branch
+from .switch import cmd_create_branch, cmd_switch_branch
 
 
 __all__ = [
@@ -25,4 +25,5 @@ __all__ = [
     "cmd_check_ignore",
     "cmd_status",
     "cmd_create_branch",
+    "cmd_switch_branch",
 ]

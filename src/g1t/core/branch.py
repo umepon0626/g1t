@@ -4,6 +4,7 @@ from g1t.core.index import rm, add
 from g1t.core.utils import tree_to_dict
 from pathlib import Path
 
+
 TreeDiff = dict[str, tuple[str | None, str | None]]
 
 
@@ -41,8 +42,8 @@ def change_head_pointing_ref(repo: Repository, branch_name: str) -> None:
 
 
 def tree_diff(repo: Repository, a_sha: str, b_sha: str) -> TreeDiff:
-    a_tree = tree_to_dict(repo, a_sha, Path())
-    b_tree = tree_to_dict(repo, b_sha, Path())
+    a_tree = tree_to_dict(repo, a_sha, repo.worktree)
+    b_tree = tree_to_dict(repo, b_sha, repo.worktree)
     all_paths = set(a_tree.keys()) | set(b_tree.keys())
     diff = {}
     for path in all_paths:
@@ -82,6 +83,6 @@ def update_index(repo: Repository, change: TreeDiff) -> None:
         if a_sha is None:
             add(repo, [Path(path)])
         elif b_sha is None:
-            rm(repo, [Path(path)])
+            rm(repo, [Path(path)], delete=False)
         else:
             add(repo, [Path(path)])

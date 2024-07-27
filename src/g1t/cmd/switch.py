@@ -41,6 +41,7 @@ def cmd_switch_branch(branch_name: str) -> None:
         raise Exception("Invalid commit")
 
     diff = tree_diff(repository, from_tree_sha, to_tree_sha)
+
     apply_changes(repository, diff)
     update_index(repository, diff)
     change_head_pointing_ref(repository, branch_name)
