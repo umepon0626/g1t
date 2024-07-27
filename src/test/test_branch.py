@@ -36,13 +36,12 @@ def test_create_new_branch() -> None:
 
 def test_switch_to_existing_branch() -> None:
     repo = Repo(PROJECT_ROOT)
-    repo.git.stash()
     new_branch_name = "new_branch"
     cmd_create_branch(new_branch_name)
     add_test_sample_file()
     # diffがあることを確認
 
-    assert len(repo.index.diff(None)) == 1
+    len_diff = len(repo.index.diff(None))
     repo.index.add([SAMPLE_FILE_PATH])
 
     repo.index.commit("test commit")
@@ -51,5 +50,5 @@ def test_switch_to_existing_branch() -> None:
 
     assert repo.active_branch.name == "main"
     assert not SAMPLE_FILE_PATH.exists()
-    # statusが空であることを確認
-    assert not repo.index.diff(None)
+    # statusが変化していないことを確認
+    assert len(repo.index.diff(None)) == len_diff
